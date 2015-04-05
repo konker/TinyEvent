@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
 group = 'com.luxvelocitas.tinyevent'
-version = '1.0-SNAPSHOT'
+version = '0.1.0'
 
 description = """TinyEvent"""
 
@@ -14,7 +14,7 @@ jar {
 }
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 dependencies {
     testCompile group: 'junit', name: 'junit', version:'3.8.1'
