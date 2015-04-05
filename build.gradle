@@ -1,0 +1,21 @@
+apply plugin: 'java'
+
+group = 'com.luxvelocitas.tinyevent'
+version = '1.0-SNAPSHOT'
+
+description = """TinyEvent"""
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+jar {
+    baseName = 'TinyEvent'
+    version =  '0.1.0'
+}
+
+repositories {
+    mavenCentral()
+}
+dependencies {
+    testCompile group: 'junit', name: 'junit', version:'3.8.1'
+}
