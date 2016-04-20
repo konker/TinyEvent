@@ -1,7 +1,7 @@
 package com.luxvelocitas.tinyevent;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -12,9 +12,11 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class SimpleTinyEventDispatcher<T extends Enum, D> implements ITinyEventDispatcher<T, D> {
     protected Map<T, Set<ITinyEventListener<T, D>>> mListeners;
+    protected Set<ITinyEventListener<T, D>> mStarListeners;
 
     public SimpleTinyEventDispatcher() {
         mListeners = new HashMap<T, Set<ITinyEventListener<T, D>>>();
+        mStarListeners = new CopyOnWriteArraySet<ITinyEventListener<T, D>>();
     }
 
     @Override
@@ -27,6 +29,13 @@ public class SimpleTinyEventDispatcher<T extends Enum, D> implements ITinyEventD
     }
 
     @Override
+    public void addStarListener(ITinyEventListener<T, D> listener) {
+        if (!mStarListeners.contains(listener)) {
+            mStarListeners.add(listener);
+        }
+    }
+
+    @Override
     public void removeListener(T eventType, ITinyEventListener<T, D> listener) {
         if (mListeners.containsKey(eventType)) {
             mListeners.get(eventType).remove(listener);
@@ -34,7 +43,15 @@ public class SimpleTinyEventDispatcher<T extends Enum, D> implements ITinyEventD
     }
 
     @Override
+    public void removeStarListener(ITinyEventListener<T, D> listener) {
+        if (mStarListeners.contains(listener)) {
+            mStarListeners.remove(listener);
+        }
+    }
+
+    @Override
     public void notify(TinyEvent<T, D> event) {
+        // First notify event-specific listeners, if any
         if (mListeners.containsKey(event.getEventType())) {
             Set<ITinyEventListener<T, D>> listeners =
                     mListeners.get(event.getEventType());
@@ -42,6 +59,11 @@ public class SimpleTinyEventDispatcher<T extends Enum, D> implements ITinyEventD
             for (ITinyEventListener<T, D> listener : listeners) {
                 listener.receive(event);
             }
+        }
+
+        // Then notify "star" listeners
+        for (ITinyEventListener<T, D> listener : mStarListeners) {
+            listener.receive(event);
         }
     }
 
